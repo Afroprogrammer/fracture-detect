@@ -1,14 +1,14 @@
-// app/api/predict/route.ts
+// app/history/route.ts
 import { NextRequest, NextResponse } from "next/server"
 
 // Use dynamic rendering for streaming requests
 export const dynamic = "force-dynamic"
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
         const contentType = req.headers.get("content-type") || ""
         const res = await fetch("http://54.87.17.33:5000/history", {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": contentType,
             },
