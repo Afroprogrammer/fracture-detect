@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 export async function POST(req: NextRequest) {
     try {
         const contentType = req.headers.get("content-type") || ""
-        const res = await fetch("http://54.87.17.33:5000/predict", {
+        const res = await fetch("http://54.87.17.33:5000/history", {
             method: "POST",
             headers: {
                 "Content-Type": contentType,
@@ -16,8 +16,19 @@ export async function POST(req: NextRequest) {
             body: req.body,
             duplex: "half",
         })
-        const data = await res.json()
-        return NextResponse.json(data, { status: res.status })
+
+        const resContentType = res.headers.get("content-type") || ""
+        if (resContentType.includes("application/json")) {
+            const data = await res.json()
+            return NextResponse.json(data, { status: res.status })
+        } else {
+            const text = await res.text()
+            console.error("Non-JSON response from external API:", text)
+            return NextResponse.json(
+                { error: "Non-JSON response", data: text },
+                { status: res.status }
+            )
+        }
     } catch (err: any) {
         console.error("Proxy error:", err)
         return NextResponse.json(
