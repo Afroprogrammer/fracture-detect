@@ -5,15 +5,15 @@ import "./globals.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-      <html lang="en">
-      <body>
-      <AuthProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
-      </AuthProvider>
+    <html lang="en">
+      <body className="min-h-screen">
+        <AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
-      </html>
+    </html>
   )
 }
 

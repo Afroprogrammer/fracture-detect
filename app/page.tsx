@@ -1,86 +1,81 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import AnalysisArea from "@/components/analysis-area"
-import HistorySection from "@/components/history-section"
+import { redirect } from "next/navigation"
+import { getServerSession } from "next-auth/next"
 import { Button } from "@/components/ui/button"
-import { UserMenu } from "@/components/user-menu"
-import { useSession } from "next-auth/react"
+import Link from "next/link"
 
-export default function Home() {
-    const [activeView, setActiveView] = useState<"analyze" | "history">("analyze")
-    const { data: session } = useSession()
+export default async function LandingPage() {
+  const session = await getServerSession()
 
-    return (
-        <div className="min-h-screen flex flex-col">
-            <header className="border-b">
-                <div className="container flex h-16 items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                            FD
-                        </div>
-                        <span className="font-semibold">FractureDetect AI</span>
-                    </div>
+  // If user is already logged in, redirect to dashboard
+  if (session) {
+    redirect("/dashboard")
+  }
 
-                    <div className="hidden md:flex gap-2">
-                        <Button variant={activeView === "analyze" ? "default" : "ghost"} onClick={() => setActiveView("analyze")}>
-                            Analyze New Image
-                        </Button>
-                        <Button variant={activeView === "history" ? "default" : "ghost"} onClick={() => setActiveView("history")}>
-                            Analysis History
-                        </Button>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        {session?.user?.name && <span className="text-sm hidden md:inline-block">{session.user.name}</span>}
-                        <UserMenu />
-                    </div>
-                </div>
-            </header>
-
-            <main className="flex-1 container py-6">
-                <div className="md:hidden mb-6 flex gap-2">
-                    <Button
-                        variant={activeView === "analyze" ? "default" : "outline"}
-                        onClick={() => setActiveView("analyze")}
-                        className="flex-1"
-                    >
-                        Analyze
-                    </Button>
-                    <Button
-                        variant={activeView === "history" ? "default" : "outline"}
-                        onClick={() => setActiveView("history")}
-                        className="flex-1"
-                    >
-                        History
-                    </Button>
-                </div>
-
-                {activeView === "analyze" ? <AnalysisArea /> : <HistorySection />}
-            </main>
+  return (
+    <div className="flex min-h-screen flex-col">
+      <header className="border-b">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold">
+              FD
+            </div>
+            <span className="font-semibold">FractureDetect AI</span>
+          </div>
+          <div>
+            <Button asChild>
+              <Link href="/auth/signin">Sign In</Link>
+            </Button>
+          </div>
         </div>
-    )
-}
+      </header>
 
-function UserIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-        </svg>
-    )
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32">
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+            <div className="space-y-4">
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                AI-Powered X-Ray Fracture Detection
+              </h1>
+              <p className="text-muted-foreground md:text-xl">
+                FractureDetect AI uses advanced machine learning to help medical professionals identify fractures in
+                X-ray images with high accuracy.
+              </p>
+              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <Button size="lg" asChild>
+                  <Link href="/auth/signin">Get Started</Link>
+                </Button>
+                <Button size="lg" variant="outline">
+                  Learn More
+                </Button>
+              </div>
+            </div>
+            <div className="rounded-lg border bg-card p-8 shadow-sm">
+              <div className="mx-auto aspect-video overflow-hidden rounded-lg bg-muted">
+                <img
+                  src="/images/landingpage_image.jpg" 
+                  alt="X-ray analysis demo"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="border-t py-6">
+        <div className="container mx-auto px-4 flex flex-col gap-2 md:flex-row md:gap-4 items-center justify-between">
+          <p className="text-sm text-muted-foreground">© 2025 FractureDetect AI. All rights reserved.</p>
+          <div className="flex gap-4">
+            <Link href="#" className="text-sm text-muted-foreground hover:underline">
+              Privacy Policy
+            </Link>
+            <Link href="#" className="text-sm text-muted-foreground hover:underline">
+              Terms of Service
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
 }
 
