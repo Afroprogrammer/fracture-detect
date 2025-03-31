@@ -25,6 +25,7 @@ A modern web application for fracture detection using artificial intelligence, b
 - **Validation**: Zod
 - **Charts**: Recharts
 - **State Management**: React Context
+- **Deployment**: Vercel
 
 ### Backend
 - **Framework**: Flask (Python)
@@ -32,6 +33,10 @@ A modern web application for fracture detection using artificial intelligence, b
 - **Database**: AWS DynamoDB
 - **API**: RESTful endpoints
 - **CORS**: Flask-CORS
+- **Image Processing**: Pillow
+- **AWS Integration**: boto3
+- **Serverless**: mangum
+- **Deployment**: AWS EC2
 
 ## Getting Started
 
@@ -40,8 +45,9 @@ A modern web application for fracture detection using artificial intelligence, b
 - Node.js (Latest LTS version recommended)
 - pnpm (Package manager)
 - Python 3.x
-- AWS Account with SageMaker and DynamoDB access
+- AWS Account with SageMaker, DynamoDB, and EC2 access
 - AWS CLI configured with appropriate credentials
+- Vercel account for frontend deployment
 
 ### Installation
 
@@ -59,7 +65,7 @@ pnpm install
 3. Install backend dependencies:
 ```bash
 cd backend
-pip install flask flask-cors boto3
+pip install -r requirement.txt
 ```
 
 4. Set up environment variables:
@@ -87,6 +93,142 @@ pnpm dev
 
 The application will be available at `http://localhost:3000`
 
+## Deployment
+
+### Frontend Deployment (Vercel)
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Connect your repository to Vercel
+3. Configure environment variables in Vercel:
+   - `NEXT_PUBLIC_API_URL`: Your EC2 backend URL
+4. Deploy the application:
+```bash
+vercel deploy
+```
+
+### Backend Deployment (AWS EC2)
+
+1. Launch an EC2 instance:
+   - Choose Ubuntu Server 22.04 LTS
+   - Select t2.micro (free tier) or larger based on needs
+   - Configure security group to allow HTTP (80) and HTTPS (443) traffic
+
+2. SSH into your EC2 instance:
+```bash
+ssh -i your-key.pem ubuntu@your-ec2-ip
+```
+
+3. Install required software:
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Python and pip
+sudo apt install python3-pip -y
+
+# Install nginx
+sudo apt install nginx -y
+
+# Install certbot for SSL
+sudo apt install certbot python3-certbot-nginx -y
+```
+
+4. Clone and set up the backend:
+```bash
+# Clone repository
+git clone [your-repository-url]
+cd fracture-detect/backend
+
+# Install dependencies
+pip3 install -r requirement.txt
+
+# Set up environment variables
+nano .env
+# Add your AWS credentials and other environment variables
+```
+
+5. Configure Nginx:
+```bash
+sudo nano /etc/nginx/sites-available/fracture-detect
+```
+
+Add the following configuration:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+6. Enable the site and restart Nginx:
+```bash
+sudo ln -s /etc/nginx/sites-available/fracture-detect /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+7. Set up SSL certificate:
+```bash
+sudo certbot --nginx -d your-domain.com
+```
+
+8. Run the application:
+```bash
+# Install screen for persistent sessions
+sudo apt install screen -y
+
+# Create a new screen session
+screen -S fracture-detect
+
+# Run the application
+python3 app.py
+
+# Detach from screen session: Press Ctrl+A, then D
+```
+
+## Testing
+
+### Integration Testing
+
+The application has been thoroughly tested with the following integration test scenarios:
+
+1. Frontend to Backend Integration:
+   - Image upload functionality
+   - API endpoint communication
+   - Error handling and response validation
+   - Authentication flow
+
+2. Backend to AWS Services Integration:
+   - SageMaker endpoint communication
+   - DynamoDB operations
+   - AWS credentials validation
+   - Error handling for AWS services
+
+3. End-to-End User Flow Testing:
+   - User registration and login
+   - Image upload and processing
+   - Results display and history
+   - Dashboard functionality
+   - Responsive design across devices
+
+### Test Results
+
+All integration tests have passed successfully, confirming:
+- Seamless communication between frontend and backend
+- Proper data flow through AWS services
+- Accurate fracture detection results
+- Reliable data persistence in DynamoDB
+- Optimal performance under load
+
 ## Project Structure
 
 ```
@@ -103,7 +245,7 @@ The application will be available at `http://localhost:3000`
 ├── styles/              # Global styles
 └── backend/             # Python backend
     ├── app.py           # Flask application
-    └── requirements.txt  # Python dependencies
+    └── requirement.txt  # Python dependencies
 ```
 
 ## API Endpoints
@@ -129,11 +271,13 @@ The application will be available at `http://localhost:3000`
 This application uses the following AWS services:
 - **AWS SageMaker**: Hosts the fracture detection model
 - **AWS DynamoDB**: Stores prediction history and results
+- **AWS EC2**: Hosts the backend application
 
 Make sure you have:
 1. Configured AWS credentials
 2. Created a SageMaker endpoint with the fracture detection model
 3. Set up a DynamoDB table named "FracturePredictions"
+4. Configured EC2 instance with appropriate security groups
 
 ## Contributing
 
@@ -153,4 +297,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Radix UI](https://www.radix-ui.com/)
 - [AWS SageMaker](https://aws.amazon.com/sagemaker/)
-- [AWS DynamoDB](https://aws.amazon.com/dynamodb/) 
+- [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
+- [AWS EC2](https://aws.amazon.com/ec2/)
+- [Vercel](https://vercel.com/)
+- [Flask](https://flask.palletsprojects.com/)
+- [Pillow](https://pillow.readthedocs.io/)
+- [Mangum](https://mangum.io/) 
