@@ -2,6 +2,9 @@
 
 A modern web application for fracture detection using artificial intelligence, built with Next.js and TypeScript, powered by AWS SageMaker and DynamoDB.
 
+
+<img width="1592" alt="Screenshot 2025-03-30 at 11 55 14 PM" src="https://github.com/user-attachments/assets/eddf8336-c60a-4ee3-a88a-98b114e218bd" />
+
 ## Features
 
 - 🔐 Secure authentication system
