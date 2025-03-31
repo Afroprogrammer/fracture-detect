@@ -26,7 +26,7 @@ export default function HistorySection() {
   const fetchHistory = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://54.87.17.33:5000/history")
+      const response = await fetch("/api/history")
       const data = await response.json()
       setHistoryItems(data as HistoryItem[])
     } catch (error) {

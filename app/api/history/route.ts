@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 export async function GET(req: NextRequest) {
     try {
         const contentType = req.headers.get("content-type") || ""
-        const res = await fetch("/api/predict", {
+        const res = await fetch("http://54.87.17.33:5000/history", {
             method: "GET",
             headers: {
                 "Content-Type": contentType,
