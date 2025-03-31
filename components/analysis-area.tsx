@@ -104,7 +104,7 @@ export default function AnalysisArea() {
       }, 200)
 
       // Use the provided API endpoint
-      const apiUrl = "http://54.87.17.33:5000/predict"
+      const apiUrl = "/api/predict"
 
       console.log("Sending request to:", apiUrl)
       console.log("File being sent:", file.name, file.type, file.size)
