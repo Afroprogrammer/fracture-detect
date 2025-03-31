@@ -104,7 +104,7 @@ export default function AnalysisArea() {
       }, 200)
 
       // Use the provided API endpoint
-      const apiUrl = "/api/predict"
+      const apiUrl = "http://54.87.17.33:5000/predict"
 
       console.log("Sending request to:", apiUrl)
       console.log("File being sent:", file.name, file.type, file.size)
@@ -146,7 +146,7 @@ export default function AnalysisArea() {
   return (
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">Analyze X-Ray for Fracture</h1>
+          <h1 className="text-2xl font-bold mb-2 gradient-text">Analyze X-Ray for Fracture</h1>
           <p className="text-muted-foreground">Upload an X-ray image to detect potential fractures using AI analysis</p>
         </div>
 
@@ -160,14 +160,14 @@ export default function AnalysisArea() {
 
         {!file ? (
             <Card
-                className={`border-2 border-dashed ${isDragging ? "border-primary" : "border-muted"} hover:border-primary transition-colors`}
+                className={`border-2 border-dashed ${isDragging ? "border-primary" : "border-muted"} hover:border-primary transition-colors shadow-sm`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
             >
               <CardContent className="flex flex-col items-center justify-center py-12">
-                <div className="rounded-full bg-muted p-4 mb-4">
-                  <Upload className="h-8 w-8 text-muted-foreground" />
+                <div className="rounded-full gradient-bg p-4 mb-4">
+                  <Upload className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Drag & Drop X-Ray Image</h3>
                 <p className="text-sm text-muted-foreground mb-4 text-center max-w-md">
@@ -182,7 +182,12 @@ export default function AnalysisArea() {
                       accept="image/jpeg,image/png"
                       onChange={handleFileInput}
                   />
-                  <Button variant="outline" onClick={handleBrowseClick} type="button">
+                  <Button
+                      variant="outline"
+                      onClick={handleBrowseClick}
+                      type="button"
+                      className="border-primary text-primary hover:bg-primary/10"
+                  >
                     Browse Files
                   </Button>
                 </div>
@@ -190,7 +195,7 @@ export default function AnalysisArea() {
             </Card>
         ) : (
             <div className="space-y-6">
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-medium">Uploaded Image</h3>
@@ -216,11 +221,19 @@ export default function AnalysisArea() {
 
                     {isAnalyzing ? (
                         <div className="space-y-2">
-                          <Progress value={progress} className="h-2" />
+                          <Progress
+                              value={progress}
+                              className="h-2 bg-muted"
+                              indicatorClassName="bg-gradient-to-r from-primary to-secondary"
+                          />
                           <p className="text-sm text-muted-foreground">Analyzing... {progress}%</p>
                         </div>
                     ) : (
-                        <Button className="mt-4 w-full" onClick={startAnalysis} disabled={isAnalyzing}>
+                        <Button
+                            className="mt-4 w-full bg-primary hover:bg-primary/90"
+                            onClick={startAnalysis}
+                            disabled={isAnalyzing}
+                        >
                           Start Analysis
                         </Button>
                     )}
@@ -229,13 +242,13 @@ export default function AnalysisArea() {
               </Card>
 
               {result && (
-                  <Card>
+                  <Card className="shadow-sm">
                     <CardContent className="p-6">
                       <h3 className="font-medium mb-4">Analysis Results</h3>
-                      <div className="p-4 bg-muted rounded-md">
+                      <div className="p-4 bg-muted/50 rounded-md">
                         <div className="flex items-center gap-2 mb-2">
                           {result.prediction.includes("not") ? (
-                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                              <CheckCircle2 className="h-5 w-5 text-secondary" />
                           ) : (
                               <AlertCircle className="h-5 w-5 text-destructive" />
                           )}
@@ -243,7 +256,10 @@ export default function AnalysisArea() {
                       {result.prediction.includes("not") ? "No fracture detected" : "Fracture detected"}
                     </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">Confidence: {(result.confidence * 100).toFixed(2)}%</p>
+                        <p className="text-sm text-muted-foreground">
+                          Confidence:{" "}
+                          <span className="font-medium text-primary">{(result.confidence * 100).toFixed(2)}%</span>
+                        </p>
                         <div className="mt-4 text-sm">
                           <p>
                             {result.prediction.includes("not")
