@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"
 export async function POST(req: NextRequest) {
     try {
         const contentType = req.headers.get("content-type") || ""
-        const res = await fetch("http://54.87.17.33:5000/predict", {
+        const res = await fetch("http://54.224.10.171:5000/predict", {
             method: "POST",
             headers: {
                 "Content-Type": contentType,
